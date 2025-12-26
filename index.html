@@ -19,7 +19,7 @@
         .klavye-container { 
             position: relative; 
             display: inline-block; 
-            background: white;
+            background: #000;
             line-height: 0; 
             border: 4px solid #533483;
             border-radius: 10px;
@@ -30,14 +30,16 @@
             width: 900px !important; 
             height: auto; 
             display: block; 
+            transition: opacity 0.3s;
         }
 
+        /* Notalar varsayılan olarak gizli (sadece ince bir sınır) */
         .nota-noktasi {
             position: absolute;
-            width: 22px; 
-            height: 22px;
-            background: rgba(233, 69, 96, 0.2); 
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            width: 24px; 
+            height: 24px;
+            background: rgba(233, 69, 96, 0); /* Tamamen şeffaf */
+            border: 2px solid rgba(255, 255, 255, 0.1); /* Çok hafif belirgin */
             border-radius: 50%;
             cursor: pointer;
             transform: translate(-50%, -50%); 
@@ -45,21 +47,37 @@
             transition: all 0.2s;
         }
         
-        .nota-noktasi:hover { 
-            background: rgba(255, 215, 0, 0.6); 
-            border-color: red; 
-            transform: translate(-50%, -50%) scale(1.3); 
+        /* Mouse üzerine gelince veya 'mod-acik' sınıfı varken görünür yap */
+        .nota-noktasi:hover, .mod-acik .nota-noktasi { 
+            background: rgba(233, 69, 96, 0.6); 
+            border-color: white; 
+            box-shadow: 0 0 10px rgba(233, 69, 96, 0.8);
         }
 
-        #mesaj { font-size: 24px; margin: 20px; height: 40px; font-weight: bold; color: #4eeaf6; }
-        #hedef-gosterge { font-size: 28px; color: #ffba08; margin-bottom: 10px; font-weight: 800; }
-        
-        .header-panel { display: flex; justify-content: space-around; background: #0f3460; padding: 15px; border-radius: 10px; margin-bottom: 20px; }
-        .stat { font-size: 18px; font-weight: bold; }
-        .stat span { color: #e94560; font-size: 22px; }
+        #hedef-alani {
+            background: #0f3460;
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            border: 2px solid #e94560;
+        }
 
-        button { padding: 12px 25px; font-size: 16px; cursor: pointer; border-radius: 8px; border: none; background: #e94560; color: white; font-weight: bold; margin: 10px; transition: 0.3s; }
-        button:hover { background: #ff2e63; transform: translateY(-2px); }
+        #hedef-nota { 
+            font-size: 48px; 
+            color: #ffba08; 
+            font-weight: 900; 
+            display: block;
+            text-shadow: 0 0 15px rgba(255, 186, 8, 0.5);
+        }
+
+        #mesaj { font-size: 20px; margin: 15px; height: 30px; font-weight: bold; color: #4eeaf6; }
+        
+        .header-panel { display: flex; justify-content: space-around; background: #0f3460; padding: 10px; border-radius: 10px; margin-bottom: 15px; }
+        .stat { font-size: 18px; }
+        .stat span { color: #e94560; font-weight: bold; }
+
+        button { padding: 12px 25px; font-size: 16px; cursor: pointer; border-radius: 8px; border: none; background: #e94560; color: white; font-weight: bold; margin: 5px; transition: 0.3s; }
+        button:hover { background: #ff2e63; transform: scale(1.05); }
         .btn-hint { background: #533483; }
     </style>
 </head>
@@ -73,9 +91,12 @@
         <div class="stat">Hak: <span id="hak">3</span></div>
     </div>
 
-    <div id="hedef-gosterge">Soru: <span id="hedef-nota">-</span></div>
+    <div id="hedef-alani">
+        <span style="font-size: 14px; color: #888;">BULMAN GEREKEN NOTA:</span>
+        <span id="hedef-nota">YÜKLENİYOR...</span>
+    </div>
 
-    <div class="klavye-container">
+    <div class="klavye-container" id="klavye">
         <img id="gitar-resmi" src="gitar.jpg">
         
         <div class="nota-noktasi" style="top: 35.3%; left: 70.59%;" onclick="kontrol('Mİ')"></div>
@@ -104,12 +125,11 @@
         <div class="nota-noktasi" style="top: 70.67%; left: 13.33%;" onclick="kontrol('LA')"></div>
     </div>
 
-    <div id="mesaj">Başlamak için bir noktaya tıkla veya Notaları Göster'e bas!</div>
+    <div id="mesaj">Yükleniyor...</div>
     
     <div class="controls">
-        <button class="btn-hint" onclick="modDegistir()">Notaları Göster / Gizle</button>
-        <button onclick="yeniSoru()">Yeni Nota Sor</button>
-        <button onclick="location.reload()" style="background: #333;">Oyunu Sıfırla</button>
+        <button class="btn-hint" onclick="modDegistir()">Yardımcı Notaları Aç/Kapat</button>
+        <button onclick="location.reload()" style="background: #333;">Sıfırla</button>
     </div>
 </div>
 
@@ -119,49 +139,62 @@
     let mevcutHedef = "";
     const notalar = ['DO', 'RE', 'Mİ', 'FA', 'SOL', 'LA', 'Sİ'];
 
-    // Oyun başlar başlamaz bir soru sor
-    window.onload = yeniSoru;
+    // Sayfa hazır olduğunda oyunu başlat
+    document.addEventListener('DOMContentLoaded', () => {
+        setTimeout(yeniSoru, 500); // Yarım saniye gecikme ile başlat ki her şey yüklensin
+    });
 
     function yeniSoru() {
         if (hak <= 0) return;
+        
+        // Rastgele yeni bir nota seç
         mevcutHedef = notalar[Math.floor(Math.random() * notalar.length)];
+        
+        // UI Güncelle
         document.getElementById('hedef-nota').innerText = mevcutHedef;
-        document.getElementById('mesaj').innerText = mevcutHedef + " notasını bul!";
+        document.getElementById('mesaj').innerText = "Klavyede " + mevcutHedef + " notasını bul ve tıkla!";
         document.getElementById('mesaj').style.color = "#4eeaf6";
     }
 
-    function kontrol(tıklananNota) {
-        if (hak <= 0) return;
+    function kontrol(tiklananNota) {
+        if (hak <= 0 || mevcutHedef === "") return;
 
-        if (tıklananNota === mevcutHedef) {
+        if (tiklananNota === mevcutHedef) {
             puan += 10;
             document.getElementById('puan').innerText = puan;
-            document.getElementById('mesaj').innerText = "Tebrikler! Doğru: " + tıklananNota;
+            document.getElementById('mesaj').innerText = "HARİKA! Doğru bildin.";
             document.getElementById('mesaj').style.color = "#2ecc71";
-            setTimeout(yeniSoru, 1000); // 1 saniye sonra yeni soruya geç
+            
+            // Başarı anında hedefi temizle ki üst üste tıklanmasın
+            mevcutHedef = ""; 
+            setTimeout(yeniSoru, 1200);
         } else {
             hak--;
             document.getElementById('hak').innerText = hak;
-            document.getElementById('mesaj').innerText = "Yanlış! O bastığın " + tıklananNota + " idi.";
+            document.getElementById('mesaj').innerText = "YANLIŞ! O bastığın " + tiklananNota + " idi.";
             document.getElementById('mesaj').style.color = "#e94560";
             
             if (hak <= 0) {
-                document.getElementById('mesaj').innerText = "OYUN BİTTİ! Toplam Puan: " + puan;
-                document.getElementById('hedef-nota').innerText = "BİTTİ";
+                document.getElementById('mesaj').innerText = "OYUN BİTTİ! Puanın: " + puan;
+                document.getElementById('hedef-nota').innerText = "GEÇMİŞ OLSUN";
             }
         }
     }
 
     function modDegistir() {
+        const klavye = document.getElementById('klavye');
         const img = document.getElementById('gitar-resmi');
+        
+        // Klasördeki isimlerle birebir aynı olmalı
         const temizResim = "gitar.jpg";
         const notaliResim = "perdeler.png";
 
-        // includes kullanarak kontrol et (daha güvenlidir)
         if (img.src.includes(notaliResim)) {
             img.src = temizResim;
+            klavye.classList.remove('mod-acik');
         } else {
             img.src = notaliResim;
+            klavye.classList.add('mod-acik');
         }
     }
 </script>
