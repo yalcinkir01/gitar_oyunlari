@@ -113,19 +113,18 @@
 <script>
     let puan = 0; let hak = 3; let acik = false;
 
-   function modDegistir() {
+ function modDegistir() {
     const img = document.getElementById('gitar-resmi');
     
-    // GitHub'daki dosya isimlerinle birebir aynı olmalı (Büyük/küçük harf duyarlı)
+    // Dosya isimlerinin GitHub'daki ile birebir aynı olduğundan emin ol
     const temizResim = "gitar.jpg";
     const notaliResim = "0-5. PERDELER.png";
 
-    // img.src her zaman tam URL (https://...) döndürür. 
-    // Bu yüzden "içeriyor mu" diye bakmak daha garantidir.
-    if (img.src.includes(temizResim)) {
-        img.src = notaliResim;
-    } else {
+    // includes kullanımı, linkin tamamı yerine sadece dosya adına bakar
+    if (img.src.includes(notaliResim)) {
         img.src = temizResim;
+    } else {
+        img.src = notaliResim;
     }
 }
     }
