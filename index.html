@@ -113,25 +113,21 @@
 <script>
     let puan = 0; let hak = 3; let acik = false;
 
-    function modDegistir() {
-        const img = document.getElementById('gitar-resmi');
-        acik = !acik;
-        img.src = acik ? "0-5. PERDELER.png" : "gitar.jpg";
-    }
+   function modDegistir() {
+    const img = document.getElementById('gitar-resmi');
+    
+    // GitHub'daki dosya isimlerinle birebir aynı olmalı (Büyük/küçük harf duyarlı)
+    const temizResim = "gitar.jpg";
+    const notaliResim = "0-5. PERDELER.png";
 
-    function kontrol(dogru) {
-        if (hak <= 0) return;
-        let t = prompt("Bu nokta hangi nota?");
-        let m = document.getElementById('mesaj');
-        
-        if (t && t.toUpperCase().replace('I','İ').trim() === dogru) {
-            puan += 10; document.getElementById('puan').innerText = puan;
-            m.innerText = "✅ DOĞRU: " + dogru; m.style.color = "#4dd637";
-        } else if (t) {
-            hak--; document.getElementById('hak').innerText = hak;
-            m.innerText = "❌ YANLIŞ! Doğrusu: " + dogru; m.style.color = "#ff4d4d";
-            if (hak === 0) alert("Oyun Bitti! Toplam Puanın: " + puan);
-        }
+    // img.src her zaman tam URL (https://...) döndürür. 
+    // Bu yüzden "içeriyor mu" diye bakmak daha garantidir.
+    if (img.src.includes(temizResim)) {
+        img.src = notaliResim;
+    } else {
+        img.src = temizResim;
+    }
+}
     }
 </script>
 </body>
