@@ -2,56 +2,95 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
     <title>Gitar Nota Tahmin Oyunu</title>
     <style>
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-            background: #1a1a2e; color: white; text-align: center; margin: 0; padding: 20px; 
+            background: #1a1a2e; color: white; text-align: center; margin: 0; padding: 10px; 
         }
+        
+        /* Ana Kapsayıcı - Mobil için genişlik %95 yapıldı */
         .container { 
-            max-width: 1000px; margin: auto; background: #16213e; padding: 25px; 
-            border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+            width: 95%;
+            max-width: 1000px; 
+            margin: auto; 
+            background: #16213e; 
+            padding: 20px; 
+            border-radius: 20px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
         }
+
         .header-panel { 
             display: flex; justify-content: space-around; background: #0f3460; 
             padding: 15px; border-radius: 10px; margin-bottom: 20px; 
         }
         .stat span { color: #e94560; font-size: 24px; font-weight: bold; }
 
-        /* MERKEZİ MESAJ ALANI */
         #hedef-alani {
-            background: #0f3460; padding: 30px; border-radius: 15px; 
+            background: #0f3460; padding: 25px; border-radius: 15px; 
             margin-bottom: 20px; border: 3px solid #e94560; min-height: 120px;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             position: relative;
         }
-        #hedef-nota { font-size: 60px; color: #ffba08; font-weight: 900; }
-        #bilgi-notu { font-size: 16px; color: #888; margin-bottom: 5px; text-transform: uppercase; }
+        #hedef-nota { font-size: 50px; color: #ffba08; font-weight: 900; }
+        #bilgi-notu { font-size: 14px; color: #888; margin-bottom: 5px; text-transform: uppercase; }
 
+        /* MOBİL KAYDIRMA ÖZELLİĞİ BURADA BAŞLIYOR */
         .klavye-container { 
-            position: relative; display: inline-block; background: #333;
-            border: 4px solid #533483; border-radius: 10px; overflow: hidden;
-            pointer-events: none; opacity: 0.3; transition: 0.3s;
+            position: relative; 
+            display: block; 
+            background: #333;
+            border: 4px solid #533483; 
+            border-radius: 10px; 
+            overflow-x: auto; /* Yatay kaydırma çubuğunu açar */
+            -webkit-overflow-scrolling: touch; /* Mobilde pürüzsüz kaydırma sağlar */
+            opacity: 0.3; 
+            transition: 0.3s;
+            margin-top: 10px;
         }
+        
         .oyun-aktif { pointer-events: auto !important; opacity: 1 !important; }
 
-        #gitar-resmi { width: 900px !important; display: block; }
-
-        .nota-noktasi {
-            position: absolute; width: 30px; height: 30px;
-            background: rgba(233, 69, 96, 0.6); border: 2px solid white;
-            border-radius: 50%; cursor: pointer; transform: translate(-50%, -50%); z-index: 100;
+        /* Gitar resminin mobilde çok küçülmesini engelliyoruz */
+        #gitar-resmi { 
+            min-width: 900px; /* PC genişliğini koruyoruz ki notalar tıklanabilsin */
+            width: 100%; 
+            height: auto;
+            display: block; 
         }
-        .nota-noktasi:hover { background: #2ecc71; transform: translate(-50%, -50%) scale(1.2); }
+
+        /* Nota noktaları mobilde dokunma kolaylığı için büyütüldü */
+        .nota-noktasi {
+            position: absolute; 
+            width: 36px; 
+            height: 36px;
+            background: rgba(233, 69, 96, 0.7); 
+            border: 2px solid white;
+            border-radius: 50%; 
+            cursor: pointer; 
+            transform: translate(-50%, -50%); 
+            z-index: 100;
+        }
+        
+        .nota-noktasi:hover { background: #2ecc71; transform: translate(-50%, -50%) scale(1.1); }
 
         #timer-bar {
             position: absolute; bottom: 0; left: 0; height: 8px;
             background: #4eeaf6; width: 0%; transition: width 0.1s linear;
         }
+
         .btn-start { 
-            padding: 20px 50px; font-size: 24px; background: #2ecc71; 
+            padding: 15px 40px; font-size: 20px; background: #2ecc71; 
             color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: bold;
+        }
+
+        /* Dikey modda uyarı yazısı */
+        @media screen and (max-width: 600px) and (orientation: portrait) {
+            #hedef-alani::before {
+                content: "📱 Daha iyi bir deneyim için telefonu yan çevirip kaydırın!";
+                display: block; font-size: 11px; color: #ffba08; margin-bottom: 8px;
+            }
         }
     </style>
 </head>
@@ -66,7 +105,7 @@
 
     <div id="hedef-alani">
         <div id="start-overlay">
-            <button class="btn-start" onclick="oyunuBaslat()">BAŞLAT</button>
+            <button class="btn-start" onclick="oyunuBaslat()">OYUNU BAŞLAT</button>
         </div>
         <div id="game-ui" style="display: none;">
             <div id="bilgi-notu">NOTAYI BUL:</div>
@@ -75,8 +114,8 @@
         <div id="timer-bar"></div>
     </div>
 
-    <div class="klavye-container" id="klavye">
-        <img id="gitar-resmi" src="gitar.jpg" onerror="this.src='https://via.placeholder.com/900x300/333/fff?text=Gitar+Resmi+Bulunamadi';">
+    <div class="klavye-container" id="klavye" style="pointer-events: none;">
+        <img id="gitar-resmi" src="gitar.jpg" onerror="this.src='https://via.placeholder.com/900x300/333/fff?text=Gitar+Resmi+Yukleniyor...';">
         
         <div class="nota-noktasi" style="top: 35.3%; left: 70.59%;" onclick="kontrol('Mİ')"></div>
         <div class="nota-noktasi" style="top: 42.07%; left: 70.81%;" onclick="kontrol('LA')"></div>
@@ -128,6 +167,7 @@
         document.getElementById('start-overlay').style.display = 'none';
         document.getElementById('game-ui').style.display = 'block';
         document.getElementById('klavye').classList.add('oyun-aktif');
+        document.getElementById('klavye').style.pointerEvents = "auto";
         yeniSoru();
     }
 
@@ -157,7 +197,6 @@
             puan += 10; sesCal(880);
             document.getElementById('puan').innerText = puan;
             
-            // BİLDİRİMİ MERKEZE YAZ
             document.getElementById('bilgi-notu').innerText = "TEBRİKLER!";
             document.getElementById('bilgi-notu').style.color = "#2ecc71";
             document.getElementById('hedef-nota').innerText = "DOĞRU ✅";
@@ -169,7 +208,7 @@
                 document.getElementById('best').innerText = enYuksekSkor;
             }
             clearInterval(zamanlayıcı);
-            setTimeout(yeniSoru, 1000); // 1 saniye bekle ki sonucu görsün
+            setTimeout(yeniSoru, 1000);
         } else {
             hataYap("YANLIŞ! (" + tiklanan + ")");
         }
@@ -180,22 +219,6 @@
         hak--; sesCal(220);
         document.getElementById('hak').innerText = hak;
         
-        // HATAYI MERKEZE YAZ
         document.getElementById('bilgi-notu').innerText = "ÜZGÜNÜM";
         document.getElementById('bilgi-notu').style.color = "#e94560";
-        document.getElementById('hedef-nota').innerText = msg;
-        document.getElementById('hedef-nota').style.color = "#e94560";
-        document.getElementById('timer-bar').style.width = "0%";
-
-        if (hak <= 0) {
-            setTimeout(() => {
-                document.getElementById('hedef-nota').innerText = "OYUN BİTTİ";
-                document.getElementById('klavye').classList.remove('oyun-aktif');
-            }, 1000);
-        } else {
-            setTimeout(yeniSoru, 1500);
-        }
-    }
-</script>
-</body>
-</html>
+        document.getElementById('hedef-nota').innerText =
