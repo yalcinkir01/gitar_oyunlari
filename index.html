@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gitar Nota Tahmin Oyunu</title>
+    <style>
+        /* MacBook Pro ve Yüksek Çözünürlüklü Ekran Uyumu */
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            background: #1a1a2e; 
+            color: white; 
+            text-align: center; 
+            margin: 0; 
+            padding: 20px; 
+        }
+        
+        .container { max-width: 1000px; margin: auto; background: #16213e; padding: 25px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+
+        .klavye-container { 
+            position: relative; 
+            display: inline-block; 
+            background: white;
+            line-height: 0; 
+            border: 4px solid #533483;
+            border-radius: 10px;
+        }
+
+        /* Resim genişliği koordinatların sabit kalması için ayar aracındaki gibi 900px yapıldı */
+        #gitar-resmi { 
+            width: 900px !important; 
+            height: auto; 
+            display: block; 
+        }
+
+        .nota-noktasi {
+            position: absolute;
+            width: 16px; 
+            height: 16px;
+            background: rgba(233, 69, 96, 0.1); 
+            border: 1px solid transparent;
+            border-radius: 50%;
+            cursor: pointer;
+            transform: translate(-50%, -50%); 
+            z-index: 20;
+            transition: all 0.2s;
+        }
+        
+        .nota-noktasi:hover { 
+            background: rgba(255, 215, 0, 0.6); 
+            border-color: gold; 
+            transform: translate(-50%, -50%) scale(1.4); 
+        }
+
+        #mesaj { font-size: 22px; margin: 20px; height: 35px; font-weight: bold; }
+        
+        .header-panel { display: flex; justify-content: space-around; background: #0f3460; padding: 15px; border-radius: 10px; margin-bottom: 20px; }
+        .stat { font-size: 18px; font-weight: bold; }
+        .stat span { color: #e94560; font-size: 22px; }
+
+        button { padding: 12px 25px; font-size: 16px; cursor: pointer; border-radius: 8px; border: none; background: #e94560; color: white; font-weight: bold; margin: 10px; transition: 0.3s; }
+        button:hover { background: #ff2e63; transform: translateY(-2px); }
+        .btn-hint { background: #533483; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Gitar Nota Tahmin Oyunu</h1>
+    
+    <div class="header-panel">
+        <div class="stat">Puan: <span id="puan">0</span></div>
+        <div class="stat">Hak: <span id="hak">3</span></div>
+    </div>
+
+    <div class="klavye-container">
+        <img id="gitar-resmi" src="gitar.jpg">
+        
+        <div class="nota-noktasi" style="top: 35.3%; left: 70.59%;" onclick="kontrol('Mİ')"></div>
+        <div class="nota-noktasi" style="top: 42.07%; left: 70.81%;" onclick="kontrol('LA')"></div>
+        <div class="nota-noktasi" style="top: 48.18%; left: 70.59%;" onclick="kontrol('RE')"></div>
+        <div class="nota-noktasi" style="top: 55.82%; left: 70.59%;" onclick="kontrol('SOL')"></div>
+        <div class="nota-noktasi" style="top: 62.37%; left: 70.7%;" onclick="kontrol('Sİ')"></div>
+        <div class="nota-noktasi" style="top: 68.48%; left: 70.7%;" onclick="kontrol('Mİ')"></div>
+        <div class="nota-noktasi" style="top: 35.3%; left: 60.9%;" onclick="kontrol('FA')"></div>
+        <div class="nota-noktasi" style="top: 42.07%; left: 49.01%;" onclick="kontrol('Sİ')"></div>
+        <div class="nota-noktasi" style="top: 48.4%; left: 49.23%;" onclick="kontrol('Mİ')"></div>
+        <div class="nota-noktasi" style="top: 55.6%; left: 49.12%;" onclick="kontrol('LA')"></div>
+        <div class="nota-noktasi" style="top: 62.37%; left: 61.01%;" onclick="kontrol('DO')"></div>
+        <div class="nota-noktasi" style="top: 69.36%; left: 61.12%;" onclick="kontrol('Mİ')"></div>
+        <div class="nota-noktasi" style="top: 34.64%; left: 35.68%;" onclick="kontrol('SOL')"></div>
+        <div class="nota-noktasi" style="top: 41.85%; left: 35.68%;" onclick="kontrol('DO')"></div>
+        <div class="nota-noktasi" style="top: 48.83%; left: 35.79%;" onclick="kontrol('FA')"></div>
+        <div class="nota-noktasi" style="top: 56.26%; left: 24.12%;" onclick="kontrol('Sİ')"></div>
+        <div class="nota-noktasi" style="top: 63.46%; left: 35.79%;" onclick="kontrol('RE')"></div>
+        <div class="nota-noktasi" style="top: 69.57%; left: 35.79%;" onclick="kontrol('SOL')"></div>
+        <div class="nota-noktasi" style="top: 34.21%; left: 13.66%;" onclick="kontrol('LA')"></div>
+        <div class="nota-noktasi" style="top: 41.41%; left: 13.55%;" onclick="kontrol('RE')"></div>
+        <div class="nota-noktasi" style="top: 49.05%; left: 13.55%;" onclick="kontrol('SOL')"></div>
+        <div class="nota-noktasi" style="top: 56.04%; left: 13.55%;" onclick="kontrol('DO')"></div>
+        <div class="nota-noktasi" style="top: 63.68%; left: 13.44%;" onclick="kontrol('Mİ')"></div>
+        <div class="nota-noktasi" style="top: 70.67%; left: 13.33%;" onclick="kontrol('LA')"></div>
+    </div>
+
+    <div id="mesaj">Öğrenmek için notaları aç, tahmin etmek için noktalara tıkla!</div>
+    
+    <div class="controls">
+        <button class="btn-hint" onclick="modDegistir()">Notaları Göster / Gizle</button>
+        <button onclick="location.reload()">Oyunu Sıfırla</button>
+    </div>
+</div>
+
+<script>
+    let puan = 0; let hak = 3; let acik = false;
+
+    function modDegistir() {
+        const img = document.getElementById('gitar-resmi');
+        acik = !acik;
+        img.src = acik ? "0-5. PERDELER.jpg" : "gitar.jpg";
+    }
+
+    function kontrol(dogru) {
+        if (hak <= 0) return;
+        let t = prompt("Bu nokta hangi nota?");
+        let m = document.getElementById('mesaj');
+        
+        if (t && t.toUpperCase().replace('I','İ').trim() === dogru) {
+            puan += 10; document.getElementById('puan').innerText = puan;
+            m.innerText = "✅ DOĞRU: " + dogru; m.style.color = "#4dd637";
+        } else if (t) {
+            hak--; document.getElementById('hak').innerText = hak;
+            m.innerText = "❌ YANLIŞ! Doğrusu: " + dogru; m.style.color = "#ff4d4d";
+            if (hak === 0) alert("Oyun Bitti! Toplam Puanın: " + puan);
+        }
+    }
+</script>
+</body>
+</html>
