@@ -3,133 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gitar Nota Tahmin Oyunu PRO</title>
+    <title>Gitar Nota Tahmin Oyunu</title>
     <style>
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-            background: #1a1a2e; 
-            color: white; 
-            text-align: center; 
-            margin: 0; 
-            padding: 20px; 
+            background: #1a1a2e; color: white; text-align: center; margin: 0; padding: 20px; 
         }
-        
         .container { 
-            max-width: 1000px; 
-            margin: auto; 
-            background: #16213e; 
-            padding: 25px; 
-            border-radius: 20px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            min-height: 500px; /* İçerik olmasa da kutu küçülmesin */
+            max-width: 1000px; margin: auto; background: #16213e; padding: 25px; 
+            border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
         }
-
         .header-panel { 
-            display: flex; 
-            justify-content: space-around; 
-            background: #0f3460; 
-            padding: 15px; 
-            border-radius: 10px; 
-            margin-bottom: 20px; 
+            display: flex; justify-content: space-around; background: #0f3460; 
+            padding: 15px; border-radius: 10px; margin-bottom: 20px; 
         }
+        .stat span { color: #e94560; font-size: 24px; font-weight: bold; }
 
-        .stat { font-size: 18px; font-weight: bold; }
-        .stat span { color: #e94560; font-size: 22px; }
-
+        /* MERKEZİ MESAJ ALANI */
         #hedef-alani {
-            background: #0f3460;
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 20px;
-            border: 2px solid #e94560;
-            min-height: 100px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            background: #0f3460; padding: 30px; border-radius: 15px; 
+            margin-bottom: 20px; border: 3px solid #e94560; min-height: 120px;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
             position: relative;
         }
-
-        #hedef-nota { font-size: 48px; color: #ffba08; font-weight: 900; }
+        #hedef-nota { font-size: 60px; color: #ffba08; font-weight: 900; }
+        #bilgi-notu { font-size: 16px; color: #888; margin-bottom: 5px; text-transform: uppercase; }
 
         .klavye-container { 
-            position: relative; 
-            display: inline-block; 
-            background: #333; /* Resim yoksa gri görünsün */
-            border: 4px solid #533483;
-            border-radius: 10px;
-            overflow: hidden;
-            pointer-events: none;
-            opacity: 0.4;
-            min-width: 900px;
-            min-height: 300px;
+            position: relative; display: inline-block; background: #333;
+            border: 4px solid #533483; border-radius: 10px; overflow: hidden;
+            pointer-events: none; opacity: 0.3; transition: 0.3s;
         }
-
         .oyun-aktif { pointer-events: auto !important; opacity: 1 !important; }
 
-        #gitar-resmi { width: 900px !important; height: auto; display: block; }
+        #gitar-resmi { width: 900px !important; display: block; }
 
         .nota-noktasi {
-            position: absolute;
-            width: 28px; height: 28px;
-            background: rgba(233, 69, 96, 0.5); 
-            border: 2px solid white;
-            border-radius: 50%;
-            cursor: pointer;
-            transform: translate(-50%, -50%); 
-            z-index: 100;
+            position: absolute; width: 30px; height: 30px;
+            background: rgba(233, 69, 96, 0.6); border: 2px solid white;
+            border-radius: 50%; cursor: pointer; transform: translate(-50%, -50%); z-index: 100;
         }
+        .nota-noktasi:hover { background: #2ecc71; transform: translate(-50%, -50%) scale(1.2); }
 
         #timer-bar {
-            position: absolute;
-            bottom: 0; left: 0;
-            height: 6px;
-            background: #4eeaf6;
-            width: 0%;
-            transition: width 0.1s linear;
+            position: absolute; bottom: 0; left: 0; height: 8px;
+            background: #4eeaf6; width: 0%; transition: width 0.1s linear;
         }
-
         .btn-start { 
-            padding: 15px 40px; 
-            font-size: 22px; 
-            background: #2ecc71; 
-            color: white; 
-            border: none; 
-            border-radius: 10px; 
-            cursor: pointer;
-            font-weight: bold;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            padding: 20px 50px; font-size: 24px; background: #2ecc71; 
+            color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: bold;
         }
-
-        #mesaj { font-size: 20px; margin: 15px; font-weight: bold; height: 30px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Gitar Nota Tahmin Oyunu</h1>
-    
     <div class="header-panel">
         <div class="stat">Puan: <span id="puan">0</span></div>
-        <div class="stat">En Yüksek: <span id="best">0</span></div>
         <div class="stat">Hak: <span id="hak">3</span></div>
+        <div class="stat">En Yüksek: <span id="best">0</span></div>
     </div>
 
     <div id="hedef-alani">
-        <div id="start-screen">
-            <button class="btn-start" onclick="oyunuBaslat()">OYUNU BAŞLAT</button>
+        <div id="start-overlay">
+            <button class="btn-start" onclick="oyunuBaslat()">BAŞLAT</button>
         </div>
-        <div id="game-screen" style="display: none;">
-            <span style="font-size: 14px; color: #ccc;">BULMAN GEREKEN:</span>
+        <div id="game-ui" style="display: none;">
+            <div id="bilgi-notu">NOTAYI BUL:</div>
             <div id="hedef-nota">-</div>
         </div>
         <div id="timer-bar"></div>
     </div>
 
-    <div id="mesaj">Hazır olduğunda butona bas!</div>
-
     <div class="klavye-container" id="klavye">
-        <img id="gitar-resmi" src="gitar.jpg" onerror="this.style.display='none'; document.getElementById('klavye').style.background='#444';">
+        <img id="gitar-resmi" src="gitar.jpg" onerror="this.src='https://via.placeholder.com/900x300/333/fff?text=Gitar+Resmi+Bulunamadi';">
         
         <div class="nota-noktasi" style="top: 35.3%; left: 70.59%;" onclick="kontrol('Mİ')"></div>
         <div class="nota-noktasi" style="top: 42.07%; left: 70.81%;" onclick="kontrol('LA')"></div>
@@ -165,24 +112,21 @@
     document.getElementById('best').innerText = enYuksekSkor;
 
     let audioCtx;
-    function initAudio() {
-        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    }
-
-    function sesCal(tip) {
+    function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+    
+    function sesCal(freq) {
         if (!audioCtx) return;
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
+        const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
         osc.connect(gain); gain.connect(audioCtx.destination);
-        osc.frequency.setValueAtTime(tip === 'dogru' ? 880 : 220, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
-        osc.start(); osc.stop(audioCtx.currentTime + 0.2);
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+        osc.start(); osc.stop(audioCtx.currentTime + 0.3);
     }
 
     function oyunuBaslat() {
         initAudio();
-        document.getElementById('start-screen').style.display = 'none';
-        document.getElementById('game-screen').style.display = 'block';
+        document.getElementById('start-overlay').style.display = 'none';
+        document.getElementById('game-ui').style.display = 'block';
         document.getElementById('klavye').classList.add('oyun-aktif');
         yeniSoru();
     }
@@ -192,44 +136,62 @@
         clearInterval(zamanlayıcı);
         süre = 50;
         mevcutHedef = notalar[Math.floor(Math.random() * notalar.length)];
+        
+        document.getElementById('bilgi-notu').innerText = "NOTAYI BUL:";
+        document.getElementById('bilgi-notu').style.color = "#888";
         document.getElementById('hedef-nota').innerText = mevcutHedef;
+        document.getElementById('hedef-nota').style.color = "#ffba08";
         document.getElementById('timer-bar').style.width = "100%";
-        document.getElementById('mesaj').innerText = mevcutHedef + " notasını bul!";
-        document.getElementById('mesaj').style.color = "#4eeaf6";
 
         zamanlayıcı = setInterval(() => {
             süre--;
             document.getElementById('timer-bar').style.width = (süre * 2) + "%";
-            if (süre <= 0) hataYap("Süre doldu!");
+            if (süre <= 0) hataYap("SÜRE DOLDU!");
         }, 100);
     }
 
     function kontrol(tiklanan) {
         if (hak <= 0 || süre <= 0) return;
+        
         if (tiklanan === mevcutHedef) {
-            puan += 10; sesCal('dogru');
+            puan += 10; sesCal(880);
             document.getElementById('puan').innerText = puan;
+            
+            // BİLDİRİMİ MERKEZE YAZ
+            document.getElementById('bilgi-notu').innerText = "TEBRİKLER!";
+            document.getElementById('bilgi-notu').style.color = "#2ecc71";
+            document.getElementById('hedef-nota').innerText = "DOĞRU ✅";
+            document.getElementById('hedef-nota').style.color = "#2ecc71";
+            
             if(puan > enYuksekSkor) {
                 enYuksekSkor = puan;
                 localStorage.setItem('gitarEnYuksek', enYuksekSkor);
                 document.getElementById('best').innerText = enYuksekSkor;
             }
             clearInterval(zamanlayıcı);
-            setTimeout(yeniSoru, 800);
+            setTimeout(yeniSoru, 1000); // 1 saniye bekle ki sonucu görsün
         } else {
-            hataYap("Yanlış: " + tiklanan);
+            hataYap("YANLIŞ! (" + tiklanan + ")");
         }
     }
 
     function hataYap(msg) {
         clearInterval(zamanlayıcı);
-        hak--; sesCal('yanlis');
+        hak--; sesCal(220);
         document.getElementById('hak').innerText = hak;
-        document.getElementById('mesaj').innerText = msg;
-        document.getElementById('mesaj').style.color = "#e94560";
+        
+        // HATAYI MERKEZE YAZ
+        document.getElementById('bilgi-notu').innerText = "ÜZGÜNÜM";
+        document.getElementById('bilgi-notu').style.color = "#e94560";
+        document.getElementById('hedef-nota').innerText = msg;
+        document.getElementById('hedef-nota').style.color = "#e94560";
+        document.getElementById('timer-bar').style.width = "0%";
+
         if (hak <= 0) {
-            document.getElementById('hedef-nota').innerText = "BİTTİ";
-            document.getElementById('klavye').classList.remove('oyun-aktif');
+            setTimeout(() => {
+                document.getElementById('hedef-nota').innerText = "OYUN BİTTİ";
+                document.getElementById('klavye').classList.remove('oyun-aktif');
+            }, 1000);
         } else {
             setTimeout(yeniSoru, 1500);
         }
