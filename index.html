@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gitar Nota Tahmin Oyunu</title>
     <style>
-        /* MacBook Pro ve Yüksek Çözünürlüklü Ekran Uyumu */
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
             background: #1a1a2e; 
@@ -24,9 +23,9 @@
             line-height: 0; 
             border: 4px solid #533483;
             border-radius: 10px;
+            overflow: hidden;
         }
 
-        /* Resim genişliği koordinatların sabit kalması için ayar aracındaki gibi 900px yapıldı */
         #gitar-resmi { 
             width: 900px !important; 
             height: auto; 
@@ -35,10 +34,10 @@
 
         .nota-noktasi {
             position: absolute;
-            width: 16px; 
-            height: 16px;
-            background: rgba(233, 69, 96, 0.1); 
-            border: 1px solid transparent;
+            width: 22px; 
+            height: 22px;
+            background: rgba(233, 69, 96, 0.2); 
+            border: 2px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
             cursor: pointer;
             transform: translate(-50%, -50%); 
@@ -49,10 +48,11 @@
         .nota-noktasi:hover { 
             background: rgba(255, 215, 0, 0.6); 
             border-color: gold; 
-            transform: translate(-50%, -50%) scale(1.4); 
+            transform: translate(-50%, -50%) scale(1.3); 
         }
 
-        #mesaj { font-size: 22px; margin: 20px; height: 35px; font-weight: bold; }
+        #mesaj { font-size: 24px; margin: 20px; height: 40px; font-weight: bold; color: #4eeaf6; }
+        #hedef-gosterge { font-size: 28px; color: #ffba08; margin-bottom: 10px; font-weight: 800; }
         
         .header-panel { display: flex; justify-content: space-around; background: #0f3460; padding: 15px; border-radius: 10px; margin-bottom: 20px; }
         .stat { font-size: 18px; font-weight: bold; }
@@ -72,6 +72,8 @@
         <div class="stat">Puan: <span id="puan">0</span></div>
         <div class="stat">Hak: <span id="hak">3</span></div>
     </div>
+
+    <div id="hedef-gosterge">Soru: <span id="hedef-nota">-</span></div>
 
     <div class="klavye-container">
         <img id="gitar-resmi" src="gitar.jpg">
@@ -102,32 +104,67 @@
         <div class="nota-noktasi" style="top: 70.67%; left: 13.33%;" onclick="kontrol('LA')"></div>
     </div>
 
-    <div id="mesaj">Notaları Gor, tahmin etmek için noktalara tıkla!</div>
+    <div id="mesaj">Başlamak için bir noktaya tıkla veya Notaları Göster'e bas!</div>
     
     <div class="controls">
         <button class="btn-hint" onclick="modDegistir()">Notaları Göster / Gizle</button>
-        <button onclick="location.reload()">Oyunu Sıfırla</button>
+        <button onclick="yeniSoru()">Yeni Nota Sor</button>
+        <button onclick="location.reload()" style="background: #333;">Oyunu Sıfırla</button>
     </div>
 </div>
 
 <script>
-    let puan = 0; let hak = 3; let acik = false;
+    let puan = 0;
+    let hak = 3;
+    let mevcutHedef = "";
+    const notalar = ['DO', 'RE', 'Mİ', 'FA', 'SOL', 'LA', 'Sİ'];
 
- function modDegistir() {
-    const img = document.getElementById('gitar-resmi');
-    
-    // Dosya isimlerinin GitHub'daki ile birebir aynı olduğundan emin ol
-    const temizResim = "gitar.jpg";
-    const notaliResim = "perdeler.png";
+    // Oyun başlar başlamaz bir soru sor
+    window.onload = yeniSoru;
 
-    // includes kullanımı, linkin tamamı yerine sadece dosya adına bakar
-    if (img.src.includes(notaliResim)) {
-        img.src = temizResim;
-    } else {
-        img.src = notaliResim;
+    function yeniSoru() {
+        if (hak <= 0) return;
+        mevcutHedef = notalar[Math.floor(Math.random() * notalar.length)];
+        document.getElementById('hedef-nota').innerText = mevcutHedef;
+        document.getElementById('mesaj').innerText = mevcutHedef + " notasını bul!";
+        document.getElementById('mesaj').style.color = "#4eeaf6";
     }
-}
+
+    function kontrol(tıklananNota) {
+        if (hak <= 0) return;
+
+        if (tıklananNota === mevcutHedef) {
+            puan += 10;
+            document.getElementById('puan').innerText = puan;
+            document.getElementById('mesaj').innerText = "Tebrikler! Doğru: " + tıklananNota;
+            document.getElementById('mesaj').style.color = "#2ecc71";
+            setTimeout(yeniSoru, 1000); // 1 saniye sonra yeni soruya geç
+        } else {
+            hak--;
+            document.getElementById('hak').innerText = hak;
+            document.getElementById('mesaj').innerText = "Yanlış! O bastığın " + tıklananNota + " idi.";
+            document.getElementById('mesaj').style.color = "#e94560";
+            
+            if (hak <= 0) {
+                document.getElementById('mesaj').innerText = "OYUN BİTTİ! Toplam Puan: " + puan;
+                document.getElementById('hedef-nota').innerText = "BİTTİ";
+            }
+        }
+    }
+
+    function modDegistir() {
+        const img = document.getElementById('gitar-resmi');
+        const temizResim = "gitar.jpg";
+        const notaliResim = "perdeler.png";
+
+        // includes kullanarak kontrol et (daha güvenlidir)
+        if (img.src.includes(notaliResim)) {
+            img.src = temizResim;
+        } else {
+            img.src = notaliResim;
+        }
     }
 </script>
+
 </body>
 </html>
