@@ -30,16 +30,15 @@
             width: 900px !important; 
             height: auto; 
             display: block; 
-            transition: opacity 0.3s;
         }
 
-        /* Notalar varsayılan olarak gizli (sadece ince bir sınır) */
+        /* Notaların yerini belirleyen daireler artık hep görünür ve daha şık */
         .nota-noktasi {
             position: absolute;
-            width: 24px; 
-            height: 24px;
-            background: rgba(233, 69, 96, 0); /* Tamamen şeffaf */
-            border: 2px solid rgba(255, 255, 255, 0.1); /* Çok hafif belirgin */
+            width: 26px; 
+            height: 26px;
+            background: rgba(233, 69, 96, 0.4); 
+            border: 2px solid rgba(255, 255, 255, 0.6);
             border-radius: 50%;
             cursor: pointer;
             transform: translate(-50%, -50%); 
@@ -47,11 +46,11 @@
             transition: all 0.2s;
         }
         
-        /* Mouse üzerine gelince veya 'mod-acik' sınıfı varken görünür yap */
-        .nota-noktasi:hover, .mod-acik .nota-noktasi { 
-            background: rgba(233, 69, 96, 0.6); 
+        .nota-noktasi:hover { 
+            background: rgba(46, 204, 113, 0.8); 
             border-color: white; 
-            box-shadow: 0 0 10px rgba(233, 69, 96, 0.8);
+            transform: translate(-50%, -50%) scale(1.2);
+            box-shadow: 0 0 15px rgba(46, 204, 113, 0.6);
         }
 
         #hedef-alani {
@@ -67,7 +66,6 @@
             color: #ffba08; 
             font-weight: 900; 
             display: block;
-            text-shadow: 0 0 15px rgba(255, 186, 8, 0.5);
         }
 
         #mesaj { font-size: 20px; margin: 15px; height: 30px; font-weight: bold; color: #4eeaf6; }
@@ -78,7 +76,6 @@
 
         button { padding: 12px 25px; font-size: 16px; cursor: pointer; border-radius: 8px; border: none; background: #e94560; color: white; font-weight: bold; margin: 5px; transition: 0.3s; }
         button:hover { background: #ff2e63; transform: scale(1.05); }
-        .btn-hint { background: #533483; }
     </style>
 </head>
 <body>
@@ -92,11 +89,11 @@
     </div>
 
     <div id="hedef-alani">
-        <span style="font-size: 14px; color: #888;">BULMAN GEREKEN NOTA:</span>
+        <span style="font-size: 14px; color: #ccc;">SORULAN NOTA:</span>
         <span id="hedef-nota">YÜKLENİYOR...</span>
     </div>
 
-    <div class="klavye-container" id="klavye">
+    <div class="klavye-container">
         <img id="gitar-resmi" src="gitar.jpg">
         
         <div class="nota-noktasi" style="top: 35.3%; left: 70.59%;" onclick="kontrol('Mİ')"></div>
@@ -105,18 +102,18 @@
         <div class="nota-noktasi" style="top: 55.82%; left: 70.59%;" onclick="kontrol('SOL')"></div>
         <div class="nota-noktasi" style="top: 62.37%; left: 70.7%;" onclick="kontrol('Sİ')"></div>
         <div class="nota-noktasi" style="top: 68.48%; left: 70.7%;" onclick="kontrol('Mİ')"></div>
+
         <div class="nota-noktasi" style="top: 35.3%; left: 60.9%;" onclick="kontrol('FA')"></div>
-        <div class="nota-noktasi" style="top: 42.07%; left: 49.01%;" onclick="kontrol('Sİ')"></div>
-        <div class="nota-noktasi" style="top: 48.4%; left: 49.23%;" onclick="kontrol('Mİ')"></div>
+        <div class="nota-noktasi" style="top: 42.07%; left: 49.01%;" onclick="kontrol('Sİ')"></div> <div class="nota-noktasi" style="top: 48.4%; left: 49.23%;" onclick="kontrol('Mİ')"></div>
         <div class="nota-noktasi" style="top: 55.6%; left: 49.12%;" onclick="kontrol('LA')"></div>
         <div class="nota-noktasi" style="top: 62.37%; left: 61.01%;" onclick="kontrol('DO')"></div>
-        <div class="nota-noktasi" style="top: 69.36%; left: 61.12%;" onclick="kontrol('Mİ')"></div>
-        <div class="nota-noktasi" style="top: 34.64%; left: 35.68%;" onclick="kontrol('SOL')"></div>
+        <div class="nota-noktasi" style="top: 69.36%; left: 61.12%;" onclick="kontrol('FA')"></div> <div class="nota-noktasi" style="top: 34.64%; left: 35.68%;" onclick="kontrol('SOL')"></div>
         <div class="nota-noktasi" style="top: 41.85%; left: 35.68%;" onclick="kontrol('DO')"></div>
         <div class="nota-noktasi" style="top: 48.83%; left: 35.79%;" onclick="kontrol('FA')"></div>
         <div class="nota-noktasi" style="top: 56.26%; left: 24.12%;" onclick="kontrol('Sİ')"></div>
         <div class="nota-noktasi" style="top: 63.46%; left: 35.79%;" onclick="kontrol('RE')"></div>
         <div class="nota-noktasi" style="top: 69.57%; left: 35.79%;" onclick="kontrol('SOL')"></div>
+
         <div class="nota-noktasi" style="top: 34.21%; left: 13.66%;" onclick="kontrol('LA')"></div>
         <div class="nota-noktasi" style="top: 41.41%; left: 13.55%;" onclick="kontrol('RE')"></div>
         <div class="nota-noktasi" style="top: 49.05%; left: 13.55%;" onclick="kontrol('SOL')"></div>
@@ -125,11 +122,10 @@
         <div class="nota-noktasi" style="top: 70.67%; left: 13.33%;" onclick="kontrol('LA')"></div>
     </div>
 
-    <div id="mesaj">Yükleniyor...</div>
+    <div id="mesaj">Oyun başlıyor...</div>
     
     <div class="controls">
-        <button class="btn-hint" onclick="modDegistir()">Yardımcı Notaları Aç/Kapat</button>
-        <button onclick="location.reload()" style="background: #333;">Sıfırla</button>
+        <button onclick="location.reload()">Oyunu Yeniden Başlat</button>
     </div>
 </div>
 
@@ -139,20 +135,15 @@
     let mevcutHedef = "";
     const notalar = ['DO', 'RE', 'Mİ', 'FA', 'SOL', 'LA', 'Sİ'];
 
-    // Sayfa hazır olduğunda oyunu başlat
     document.addEventListener('DOMContentLoaded', () => {
-        setTimeout(yeniSoru, 500); // Yarım saniye gecikme ile başlat ki her şey yüklensin
+        setTimeout(yeniSoru, 500);
     });
 
     function yeniSoru() {
         if (hak <= 0) return;
-        
-        // Rastgele yeni bir nota seç
         mevcutHedef = notalar[Math.floor(Math.random() * notalar.length)];
-        
-        // UI Güncelle
         document.getElementById('hedef-nota').innerText = mevcutHedef;
-        document.getElementById('mesaj').innerText = "Klavyede " + mevcutHedef + " notasını bul ve tıkla!";
+        document.getElementById('mesaj').innerText = "Gitar üzerinde " + mevcutHedef + " notasını bul!";
         document.getElementById('mesaj').style.color = "#4eeaf6";
     }
 
@@ -162,39 +153,20 @@
         if (tiklananNota === mevcutHedef) {
             puan += 10;
             document.getElementById('puan').innerText = puan;
-            document.getElementById('mesaj').innerText = "HARİKA! Doğru bildin.";
+            document.getElementById('mesaj').innerText = "DOĞRU! Harikasın.";
             document.getElementById('mesaj').style.color = "#2ecc71";
-            
-            // Başarı anında hedefi temizle ki üst üste tıklanmasın
             mevcutHedef = ""; 
-            setTimeout(yeniSoru, 1200);
+            setTimeout(yeniSoru, 1000);
         } else {
             hak--;
             document.getElementById('hak').innerText = hak;
-            document.getElementById('mesaj').innerText = "YANLIŞ! O bastığın " + tiklananNota + " idi.";
+            document.getElementById('mesaj').innerText = "YANLIŞ! Tıkladığın nota: " + tiklananNota;
             document.getElementById('mesaj').style.color = "#e94560";
             
             if (hak <= 0) {
-                document.getElementById('mesaj').innerText = "OYUN BİTTİ! Puanın: " + puan;
-                document.getElementById('hedef-nota').innerText = "GEÇMİŞ OLSUN";
+                document.getElementById('mesaj').innerText = "OYUN BİTTİ! Toplam Puan: " + puan;
+                document.getElementById('hedef-nota').innerText = "BİTTİ";
             }
-        }
-    }
-
-    function modDegistir() {
-        const klavye = document.getElementById('klavye');
-        const img = document.getElementById('gitar-resmi');
-        
-        // Klasördeki isimlerle birebir aynı olmalı
-        const temizResim = "gitar.jpg";
-        const notaliResim = "perdeler.png";
-
-        if (img.src.includes(notaliResim)) {
-            img.src = temizResim;
-            klavye.classList.remove('mod-acik');
-        } else {
-            img.src = notaliResim;
-            klavye.classList.add('mod-acik');
         }
     }
 </script>
