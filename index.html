@@ -3,65 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>Gitar Nota Tahmin Oyunu (Pro)</title>
+    <title>Gitar Nota Oyunu - Yatay Mod</title>
     <style>
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-            background: #1a1a2e; color: white; text-align: center; margin: 0; padding: 10px; 
+            background: #1a1a2e; color: white; text-align: center; margin: 0; padding: 5px; 
             overflow-x: hidden;
         }
         
         .container { 
-            width: 95%;
-            max-width: 1000px; 
-            margin: auto; 
-            background: #16213e; 
-            padding: 20px; 
-            border-radius: 20px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+            width: 98%; max-width: 1100px; margin: auto; background: #16213e; 
+            padding: 15px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
         }
 
         .header-panel { 
             display: flex; justify-content: space-around; background: #0f3460; 
-            padding: 15px; border-radius: 10px; margin-bottom: 20px; 
+            padding: 10px; border-radius: 10px; margin-bottom: 10px; 
         }
-        .stat span { color: #e94560; font-size: 24px; font-weight: bold; }
+        .stat { font-size: 16px; }
+        .stat span { color: #e94560; font-size: 20px; font-weight: bold; }
 
         #hedef-alani {
-            background: #0f3460; padding: 25px; border-radius: 15px; 
-            margin-bottom: 20px; border: 3px solid #e94560; min-height: 150px;
+            background: #0f3460; padding: 15px; border-radius: 12px; 
+            margin-bottom: 10px; border: 2px solid #e94560; min-height: 100px;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             position: relative;
         }
-        #hedef-nota { font-size: 50px; color: #ffba08; font-weight: 900; }
-        #bilgi-notu { font-size: 14px; color: #888; margin-bottom: 5px; text-transform: uppercase; }
+        #hedef-nota { font-size: 40px; color: #ffba08; font-weight: 900; margin: 0; }
+        #bilgi-notu { font-size: 12px; color: #888; text-transform: uppercase; }
+
+        /* YATAY MODDA KAYMAYI ÖNLEYEN SABİT GENİŞLİKLİ YAPI */
+        .klavye-kaydirici {
+            width: 100%;
+            overflow-x: auto;
+            background: #333;
+            border: 3px solid #533483;
+            border-radius: 8px;
+            -webkit-overflow-scrolling: touch;
+        }
 
         .klavye-container { 
             position: relative; 
-            display: block; 
-            background: #333;
-            border: 4px solid #533483; 
-            border-radius: 10px; 
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
+            width: 1000px; /* Koordinatların şaşmaması için sabit genişlik */
+            margin: 0;
             opacity: 0.3; 
             transition: 0.3s;
-            margin-top: 10px;
+            pointer-events: none;
         }
         
-        .oyun-aktif { pointer-events: auto !important; opacity: 1 !important; }
+        .oyun-aktif { opacity: 1 !important; pointer-events: auto !important; }
 
         #gitar-resmi { 
-            min-width: 900px; 
-            width: 100%; 
+            width: 100%;
             height: auto;
             display: block; 
         }
 
         .nota-noktasi {
             position: absolute; 
-            width: 38px; 
-            height: 38px;
+            width: 32px; height: 32px;
             background: rgba(233, 69, 96, 0.7); 
             border: 2px solid white;
             border-radius: 50%; 
@@ -69,34 +69,25 @@
             transform: translate(-50%, -50%); 
             z-index: 100;
         }
-        
-        .nota-noktasi:hover { background: #2ecc71; transform: translate(-50%, -50%) scale(1.1); }
 
         #timer-bar {
-            position: absolute; bottom: 0; left: 0; height: 8px;
+            position: absolute; bottom: 0; left: 0; height: 6px;
             background: #4eeaf6; width: 0%; transition: width 0.1s linear;
         }
 
-        .btn-start { 
-            padding: 15px 40px; font-size: 20px; background: #2ecc71; 
-            color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: bold;
+        /* YATAY MOD ÖZEL AYARLARI (Landscape) */
+        @media screen and (orientation: landscape) and (max-height: 500px) {
+            .container { padding: 5px; }
+            .header-panel { padding: 5px; margin-bottom: 5px; }
+            #hedef-alani { min-height: 70px; padding: 5px; margin-bottom: 5px; }
+            #hedef-nota { font-size: 30px; }
+            .stat { font-size: 14px; }
+            .stat span { font-size: 18px; }
+            .btn-finish { margin-top: 5px; padding: 5px 15px; font-size: 12px; }
         }
 
-        /* Yeni: Oyunu Bitir Butonu Stili */
-        .btn-finish {
-            margin-top: 15px; padding: 8px 20px; font-size: 14px; 
-            background: #e94560; color: white; border: none; 
-            border-radius: 8px; cursor: pointer; font-weight: bold;
-            transition: 0.2s;
-        }
-        .btn-finish:hover { background: #c0392b; }
-
-        @media screen and (max-width: 600px) and (orientation: portrait) {
-            #hedef-alani::before {
-                content: "📱 Telefonu yan çevirip kaydırarak oynayın!";
-                display: block; font-size: 11px; color: #ffba08; margin-bottom: 8px;
-            }
-        }
+        .btn-start { padding: 12px 30px; font-size: 18px; background: #2ecc71; color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; }
+        .btn-finish { margin-top: 10px; padding: 6px 15px; font-size: 13px; background: #e94560; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -115,38 +106,40 @@
         <div id="game-ui" style="display: none;">
             <div id="bilgi-notu">NOTAYI BUL:</div>
             <div id="hedef-nota">-</div>
-            <button id="finish-btn" class="btn-finish" onclick="oyunBitti()">OYUNU BİTİR</button>
+            <button id="finish-btn" class="btn-finish" onclick="oyunBitti()">BİTİR</button>
         </div>
         <div id="timer-bar"></div>
     </div>
 
-    <div class="klavye-container" id="klavye" style="pointer-events: none;">
-        <img id="gitar-resmi" src="gitar.jpg" onerror="this.src='https://images.unsplash.com/photo-1550985616-10810253b84d?q=80&w=1000&auto=format&fit=crop';">
-        
-        <div class="nota-noktasi" style="top: 35.3%; left: 70.59%;" onclick="kontrol('Mİ', this)"></div>
-        <div class="nota-noktasi" style="top: 42.07%; left: 70.81%;" onclick="kontrol('LA', this)"></div>
-        <div class="nota-noktasi" style="top: 48.18%; left: 70.59%;" onclick="kontrol('RE', this)"></div>
-        <div class="nota-noktasi" style="top: 55.82%; left: 70.59%;" onclick="kontrol('SOL', this)"></div>
-        <div class="nota-noktasi" style="top: 62.37%; left: 70.7%;" onclick="kontrol('Sİ', this)"></div>
-        <div class="nota-noktasi" style="top: 68.48%; left: 70.7%;" onclick="kontrol('Mİ', this)"></div>
-        <div class="nota-noktasi" style="top: 35.3%; left: 60.9%;" onclick="kontrol('FA', this)"></div>
-        <div class="nota-noktasi" style="top: 42.07%; left: 49.01%;" onclick="kontrol('Sİ', this)"></div>
-        <div class="nota-noktasi" style="top: 48.4%; left: 49.23%;" onclick="kontrol('Mİ', this)"></div>
-        <div class="nota-noktasi" style="top: 55.6%; left: 49.12%;" onclick="kontrol('LA', this)"></div>
-        <div class="nota-noktasi" style="top: 62.37%; left: 61.01%;" onclick="kontrol('DO', this)"></div>
-        <div class="nota-noktasi" style="top: 69.36%; left: 61.12%;" onclick="kontrol('FA', this)"></div>
-        <div class="nota-noktasi" style="top: 34.64%; left: 35.68%;" onclick="kontrol('SOL', this)"></div>
-        <div class="nota-noktasi" style="top: 41.85%; left: 35.68%;" onclick="kontrol('DO', this)"></div>
-        <div class="nota-noktasi" style="top: 48.83%; left: 35.79%;" onclick="kontrol('FA', this)"></div>
-        <div class="nota-noktasi" style="top: 56.26%; left: 24.12%;" onclick="kontrol('Sİ', this)"></div>
-        <div class="nota-noktasi" style="top: 63.46%; left: 35.79%;" onclick="kontrol('RE', this)"></div>
-        <div class="nota-noktasi" style="top: 69.57%; left: 35.79%;" onclick="kontrol('SOL', this)"></div>
-        <div class="nota-noktasi" style="top: 34.21%; left: 13.66%;" onclick="kontrol('LA', this)"></div>
-        <div class="nota-noktasi" style="top: 41.41%; left: 13.55%;" onclick="kontrol('RE', this)"></div>
-        <div class="nota-noktasi" style="top: 49.05%; left: 13.55%;" onclick="kontrol('SOL', this)"></div>
-        <div class="nota-noktasi" style="top: 56.04%; left: 13.55%;" onclick="kontrol('DO', this)"></div>
-        <div class="nota-noktasi" style="top: 63.68%; left: 13.44%;" onclick="kontrol('Mİ', this)"></div>
-        <div class="nota-noktasi" style="top: 70.67%; left: 13.33%;" onclick="kontrol('LA', this)"></div>
+    <div class="klavye-kaydirici">
+        <div class="klavye-container" id="klavye">
+            <img id="gitar-resmi" src="gitar.jpg" onerror="this.src='https://images.unsplash.com/photo-1550985616-10810253b84d?q=80&w=1000&auto=format&fit=crop';">
+            
+            <div class="nota-noktasi" style="top: 35.3%; left: 70.59%;" onclick="kontrol('Mİ', this)"></div>
+            <div class="nota-noktasi" style="top: 42.07%; left: 70.81%;" onclick="kontrol('LA', this)"></div>
+            <div class="nota-noktasi" style="top: 48.18%; left: 70.59%;" onclick="kontrol('RE', this)"></div>
+            <div class="nota-noktasi" style="top: 55.82%; left: 70.59%;" onclick="kontrol('SOL', this)"></div>
+            <div class="nota-noktasi" style="top: 62.37%; left: 70.7%;" onclick="kontrol('Sİ', this)"></div>
+            <div class="nota-noktasi" style="top: 68.48%; left: 70.7%;" onclick="kontrol('Mİ', this)"></div>
+            <div class="nota-noktasi" style="top: 35.3%; left: 60.9%;" onclick="kontrol('FA', this)"></div>
+            <div class="nota-noktasi" style="top: 42.07%; left: 49.01%;" onclick="kontrol('Sİ', this)"></div>
+            <div class="nota-noktasi" style="top: 48.4%; left: 49.23%;" onclick="kontrol('Mİ', this)"></div>
+            <div class="nota-noktasi" style="top: 55.6%; left: 49.12%;" onclick="kontrol('LA', this)"></div>
+            <div class="nota-noktasi" style="top: 62.37%; left: 61.01%;" onclick="kontrol('DO', this)"></div>
+            <div class="nota-noktasi" style="top: 69.36%; left: 61.12%;" onclick="kontrol('FA', this)"></div>
+            <div class="nota-noktasi" style="top: 34.64%; left: 35.68%;" onclick="kontrol('SOL', this)"></div>
+            <div class="nota-noktasi" style="top: 41.85%; left: 35.68%;" onclick="kontrol('DO', this)"></div>
+            <div class="nota-noktasi" style="top: 48.83%; left: 35.79%;" onclick="kontrol('FA', this)"></div>
+            <div class="nota-noktasi" style="top: 56.26%; left: 24.12%;" onclick="kontrol('Sİ', this)"></div>
+            <div class="nota-noktasi" style="top: 63.46%; left: 35.79%;" onclick="kontrol('RE', this)"></div>
+            <div class="nota-noktasi" style="top: 69.57%; left: 35.79%;" onclick="kontrol('SOL', this)"></div>
+            <div class="nota-noktasi" style="top: 34.21%; left: 13.66%;" onclick="kontrol('LA', this)"></div>
+            <div class="nota-noktasi" style="top: 41.41%; left: 13.55%;" onclick="kontrol('RE', this)"></div>
+            <div class="nota-noktasi" style="top: 49.05%; left: 13.55%;" onclick="kontrol('SOL', this)"></div>
+            <div class="nota-noktasi" style="top: 56.04%; left: 13.55%;" onclick="kontrol('DO', this)"></div>
+            <div class="nota-noktasi" style="top: 63.68%; left: 13.44%;" onclick="kontrol('Mİ', this)"></div>
+            <div class="nota-noktasi" style="top: 70.67%; left: 13.33%;" onclick="kontrol('LA', this)"></div>
+        </div>
     </div>
 </div>
 
@@ -188,7 +181,6 @@
         document.getElementById('start-overlay').style.display = 'none';
         document.getElementById('game-ui').style.display = 'block';
         document.getElementById('klavye').classList.add('oyun-aktif');
-        document.getElementById('klavye').style.pointerEvents = "auto";
         yeniSoru();
     }
 
@@ -214,7 +206,7 @@
         const konumId = element.style.top + element.style.left;
         if (tiklananNota === mevcutHedef) {
             if (sonBilinenFretler[tiklananNota] === konumId) {
-                document.getElementById('bilgi-notu').innerText = "BAŞKA BİR KONUM SEÇ!";
+                document.getElementById('bilgi-notu').innerText = "BAŞKA KONUM!";
                 document.getElementById('bilgi-notu').style.color = "#ffba08";
                 sesCal(150);
                 return;
@@ -222,17 +214,15 @@
             sonBilinenFretler[tiklananNota] = konumId;
             puan += 10; sesCal(880);
             document.getElementById('puan').innerText = puan;
-            document.getElementById('bilgi-notu').innerText = "DOĞRU KONUM!";
+            document.getElementById('bilgi-notu').innerText = "DOĞRU ✅";
             document.getElementById('bilgi-notu').style.color = "#2ecc71";
-            document.getElementById('hedef-nota').innerText = "✅";
-            document.getElementById('hedef-nota').style.color = "#2ecc71";
             if(puan > enYuksekSkor) {
                 enYuksekSkor = puan;
                 try { localStorage.setItem('gitarEnYuksek', enYuksekSkor); } catch(e){}
                 document.getElementById('best').innerText = enYuksekSkor;
             }
             clearInterval(zamanlayıcı);
-            setTimeout(yeniSoru, 1000);
+            setTimeout(yeniSoru, 800);
         } else {
             hataYap("YANLIŞ! (" + tiklananNota + ")");
         }
@@ -252,13 +242,12 @@
     function oyunBitti() {
         clearInterval(zamanlayıcı);
         document.getElementById('timer-bar').style.width = "0%";
-        document.getElementById('bilgi-notu').innerText = "OYUN SONLANDI";
+        document.getElementById('bilgi-notu').innerText = "OYUN BİTTİ";
         document.getElementById('hedef-nota').innerText = "SKOR: " + puan;
         document.getElementById('start-overlay').style.display = 'block';
-        document.getElementById('game-ui').style.display = 'none'; // UI'yi gizle (buton dahil)
+        document.getElementById('game-ui').style.display = 'none';
         document.getElementById('main-btn').innerText = "YENİDEN BAŞLA";
         document.getElementById('klavye').classList.remove('oyun-aktif');
-        document.getElementById('klavye').style.pointerEvents = "none";
     }
 </script>
 </body>
