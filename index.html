@@ -8,6 +8,7 @@
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
             background: #1a1a2e; color: white; text-align: center; margin: 0; padding: 10px; 
+            overflow-x: hidden;
         }
         
         .container { 
@@ -79,6 +80,7 @@
         .btn-start { 
             padding: 15px 40px; font-size: 20px; background: #2ecc71; 
             color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: bold;
+            z-index: 1000; position: relative;
         }
 
         @media screen and (max-width: 600px) and (orientation: portrait) {
@@ -140,44 +142,68 @@
 </div>
 
 <script>
+    // Global Değişkenler
     let puan = 0, hak = 3, mevcutHedef = "", süre = 50, zamanlayıcı;
-    let enYuksekSkor = localStorage.getItem('gitarEnYuksek') || 0;
+    let audioCtx = null;
+    let sonBilinenFretler = { 'DO': null, 'RE': null, 'Mİ': null, 'FA': null, 'SOL': null, 'LA': null, 'Sİ': null };
     const notalar = ['DO', 'RE', 'Mİ', 'FA', 'SOL', 'LA', 'Sİ'];
-    
-    // Hafıza: Her nota isminin son doğru bilinen konumunu tutar
-    let sonBilinenFretler = {
-        'DO': null, 'RE': null, 'Mİ': null, 'FA': null, 'SOL': null, 'LA': null, 'Sİ': null
-    };
 
-    document.getElementById('best').innerText = enYuksekSkor;
+    // En yüksek skoru güvenli yükle
+    let enYuksekSkor = 0;
+    try {
+        enYuksekSkor = localStorage.getItem('gitarEnYuksek') || 0;
+        document.getElementById('best').innerText = enYuksekSkor;
+    } catch(e) { console.log("Storage erişimi engellendi."); }
 
-    let audioCtx;
-    function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+    // Ses sistemini başlat
+    function initAudio() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+    }
     
     function sesCal(freq) {
         if (!audioCtx) return;
-        const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
-        osc.connect(gain); gain.connect(audioCtx.destination);
-        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
-        osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+        try {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.3);
+        } catch(e) { console.log("Ses çalınamadı."); }
     }
 
+    // OYUNU BAŞLAT BUTONUNA TIKLANDIĞINDA
     function oyunuBaslat() {
-        initAudio();
-        puan = 0; hak = 3;
+        console.log("Oyun başlatılıyor...");
+        initAudio(); // Ses motorunu uyandır
+        
+        // Değerleri sıfırla
+        puan = 0;
+        hak = 3;
         sonBilinenFretler = { 'DO': null, 'RE': null, 'Mİ': null, 'FA': null, 'SOL': null, 'LA': null, 'Sİ': null };
+        
         document.getElementById('puan').innerText = puan;
         document.getElementById('hak').innerText = hak;
+        
+        // UI Güncelle
         document.getElementById('start-overlay').style.display = 'none';
         document.getElementById('game-ui').style.display = 'block';
         document.getElementById('klavye').classList.add('oyun-aktif');
         document.getElementById('klavye').style.pointerEvents = "auto";
+        
         yeniSoru();
     }
 
     function yeniSoru() {
         if (hak <= 0) return;
+        
         clearInterval(zamanlayıcı);
         süre = 50;
         mevcutHedef = notalar[Math.floor(Math.random() * notalar.length)];
@@ -191,14 +217,15 @@
         zamanlayıcı = setInterval(() => {
             süre--;
             document.getElementById('timer-bar').style.width = (süre * 2) + "%";
-            if (süre <= 0) hataYap("SÜRE DOLDU!");
+            if (süre <= 0) {
+                hataYap("SÜRE DOLDU!");
+            }
         }, 100);
     }
 
     function kontrol(tiklananNota, element) {
         if (hak <= 0 || süre <= 0) return;
         
-        // Elementin konumunu kimlik olarak al
         const konumId = element.style.top + element.style.left;
 
         if (tiklananNota === mevcutHedef) {
@@ -206,4 +233,59 @@
             if (sonBilinenFretler[tiklananNota] === konumId) {
                 document.getElementById('bilgi-notu').innerText = "BAŞKA BİR KONUM SEÇ!";
                 document.getElementById('bilgi-notu').style.color = "#ffba08";
-                sesCal(1
+                sesCal(150);
+                return;
+            }
+
+            sonBilinenFretler[tiklananNota] = konumId;
+            puan += 10;
+            sesCal(880);
+            document.getElementById('puan').innerText = puan;
+            
+            document.getElementById('bilgi-notu').innerText = "DOĞRU KONUM!";
+            document.getElementById('bilgi-notu').style.color = "#2ecc71";
+            document.getElementById('hedef-nota').innerText = "✅";
+            document.getElementById('hedef-nota').style.color = "#2ecc71";
+            
+            if(puan > enYuksekSkor) {
+                enYuksekSkor = puan;
+                try { localStorage.setItem('gitarEnYuksek', enYuksekSkor); } catch(e){}
+                document.getElementById('best').innerText = enYuksekSkor;
+            }
+            
+            clearInterval(zamanlayıcı);
+            setTimeout(yeniSoru, 1000);
+        } else {
+            hataYap("YANLIŞ! (" + tiklananNota + ")");
+        }
+    }
+
+    function hataYap(msg) {
+        clearInterval(zamanlayıcı);
+        hak--;
+        sesCal(220);
+        document.getElementById('hak').innerText = hak;
+        
+        document.getElementById('bilgi-notu').innerText = msg;
+        document.getElementById('bilgi-notu').style.color = "#e94560";
+        document.getElementById('hedef-nota').innerText = "❌";
+        
+        if (hak > 0) {
+            setTimeout(yeniSoru, 1000);
+        } else {
+            setTimeout(oyunBitti, 1000);
+        }
+    }
+
+    function oyunBitti() {
+        clearInterval(zamanlayıcı);
+        document.getElementById('bilgi-notu').innerText = "OYUN BİTTİ!";
+        document.getElementById('hedef-nota').innerText = "SKOR: " + puan;
+        document.getElementById('start-overlay').style.display = 'block';
+        document.getElementById('main-btn').innerText = "TEKRAR DENE";
+        document.getElementById('klavye').classList.remove('oyun-aktif');
+        document.getElementById('klavye').style.pointerEvents = "none";
+    }
+</script>
+</body>
+</html>
