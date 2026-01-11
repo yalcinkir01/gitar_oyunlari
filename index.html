@@ -10,7 +10,6 @@
             background: #1a1a2e; color: white; text-align: center; margin: 0; padding: 10px; 
         }
         
-        /* Ana Kapsayıcı - Mobil için genişlik %95 yapıldı */
         .container { 
             width: 95%;
             max-width: 1000px; 
@@ -36,15 +35,14 @@
         #hedef-nota { font-size: 50px; color: #ffba08; font-weight: 900; }
         #bilgi-notu { font-size: 14px; color: #888; margin-bottom: 5px; text-transform: uppercase; }
 
-        /* MOBİL KAYDIRMA ÖZELLİĞİ BURADA BAŞLIYOR */
         .klavye-container { 
             position: relative; 
             display: block; 
             background: #333;
             border: 4px solid #533483; 
             border-radius: 10px; 
-            overflow-x: auto; /* Yatay kaydırma çubuğunu açar */
-            -webkit-overflow-scrolling: touch; /* Mobilde pürüzsüz kaydırma sağlar */
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
             opacity: 0.3; 
             transition: 0.3s;
             margin-top: 10px;
@@ -52,15 +50,13 @@
         
         .oyun-aktif { pointer-events: auto !important; opacity: 1 !important; }
 
-        /* Gitar resminin mobilde çok küçülmesini engelliyoruz */
         #gitar-resmi { 
-            min-width: 900px; /* PC genişliğini koruyoruz ki notalar tıklanabilsin */
+            min-width: 900px; 
             width: 100%; 
             height: auto;
             display: block; 
         }
 
-        /* Nota noktaları mobilde dokunma kolaylığı için büyütüldü */
         .nota-noktasi {
             position: absolute; 
             width: 36px; 
@@ -85,7 +81,6 @@
             color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: bold;
         }
 
-        /* Dikey modda uyarı yazısı */
         @media screen and (max-width: 600px) and (orientation: portrait) {
             #hedef-alani::before {
                 content: "📱 Daha iyi bir deneyim için telefonu yan çevirip kaydırın!";
@@ -105,7 +100,7 @@
 
     <div id="hedef-alani">
         <div id="start-overlay">
-            <button class="btn-start" onclick="oyunuBaslat()">OYUNU BAŞLAT</button>
+            <button id="main-btn" class="btn-start" onclick="oyunuBaslat()">OYUNU BAŞLAT</button>
         </div>
         <div id="game-ui" style="display: none;">
             <div id="bilgi-notu">NOTAYI BUL:</div>
@@ -115,7 +110,7 @@
     </div>
 
     <div class="klavye-container" id="klavye" style="pointer-events: none;">
-        <img id="gitar-resmi" src="gitar.jpg" onerror="this.src='https://via.placeholder.com/900x300/333/fff?text=Gitar+Resmi+Yukleniyor...';">
+        <img id="gitar-resmi" src="gitar.jpg" onerror="this.src='https://images.unsplash.com/photo-1550985616-10810253b84d?q=80&w=1000&auto=format&fit=crop';">
         
         <div class="nota-noktasi" style="top: 35.3%; left: 70.59%;" onclick="kontrol('Mİ')"></div>
         <div class="nota-noktasi" style="top: 42.07%; left: 70.81%;" onclick="kontrol('LA')"></div>
@@ -164,6 +159,10 @@
 
     function oyunuBaslat() {
         initAudio();
+        puan = 0;
+        hak = 3;
+        document.getElementById('puan').innerText = puan;
+        document.getElementById('hak').innerText = hak;
         document.getElementById('start-overlay').style.display = 'none';
         document.getElementById('game-ui').style.display = 'block';
         document.getElementById('klavye').classList.add('oyun-aktif');
@@ -172,7 +171,10 @@
     }
 
     function yeniSoru() {
-        if (hak <= 0) return;
+        if (hak <= 0) {
+            oyunBitti();
+            return;
+        }
         clearInterval(zamanlayıcı);
         süre = 50;
         mevcutHedef = notalar[Math.floor(Math.random() * notalar.length)];
@@ -219,6 +221,26 @@
         hak--; sesCal(220);
         document.getElementById('hak').innerText = hak;
         
-        document.getElementById('bilgi-notu').innerText = "ÜZGÜNÜM";
+        document.getElementById('bilgi-notu').innerText = msg;
         document.getElementById('bilgi-notu').style.color = "#e94560";
-        document.getElementById('hedef-nota').innerText =
+        document.getElementById('hedef-nota').innerText = "❌";
+        
+        if (hak > 0) {
+            setTimeout(yeniSoru, 1000);
+        } else {
+            setTimeout(oyunBitti, 1000);
+        }
+    }
+
+    function oyunBitti() {
+        clearInterval(zamanlayıcı);
+        document.getElementById('bilgi-notu').innerText = "OYUN BİTTİ!";
+        document.getElementById('hedef-nota').innerText = "SKOR: " + puan;
+        document.getElementById('start-overlay').style.display = 'block';
+        document.getElementById('main-btn').innerText = "TEKRAR DENE";
+        document.getElementById('klavye').classList.remove('oyun-aktif');
+        document.getElementById('klavye').style.pointerEvents = "none";
+    }
+</script>
+</body>
+</html>
